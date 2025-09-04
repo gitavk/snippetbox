@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"database/sql"
 	"time"
 )
@@ -23,7 +24,16 @@ type SnippetModel struct {
 
 // This will insert a new snippet into the database.
 func (m *SnippetModel) Insert(title string, content string, expires int) (int, error) {
-	return 0, nil
+	var id int
+	stmt := `INSERT INTO snippets (title, content, created, expires)
+          VALUES($1, $2, NOW(), NOW() + INTERVAL '1 day' * $3) RETURNING id`
+	err := m.DB.QueryRowContext(context.Background(), stmt, title, content, expires).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+	// The ID returned has the type int64, so we convert it to an int type
+	// before returning.
+	return id, nil
 }
 
 // This will return a specific snippet based on its id.
