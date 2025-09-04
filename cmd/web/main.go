@@ -7,11 +7,13 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gitavk/snippetbox/internal/models"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type application struct {
-	logger *slog.Logger
+	logger   *slog.Logger
+	snippets *models.SnippetModel
 }
 
 func main() {
@@ -37,7 +39,8 @@ func main() {
 	logger.Info("Database info:", "db_time", db_time)
 
 	app := &application{
-		logger: logger,
+		logger:   logger,
+		snippets: &models.SnippetModel{DB: db},
 	}
 
 	logger.Info("starting server on", slog.String("addr", *addr))
