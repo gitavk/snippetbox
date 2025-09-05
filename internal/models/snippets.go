@@ -63,5 +63,41 @@ func (m *SnippetModel) Get(id int) (Snippet, error) {
 
 // This will return the 10 most recently created snippets.
 func (m *SnippetModel) Latest() ([]Snippet, error) {
-	return nil, nil
+	stmt := `SELECT id, title, content, created, expires FROM snippets
+          WHERE expires > NOW() ORDER BY id DESC LIMIT 10`
+	rows, err := m.DB.QueryContext(context.Background(), stmt)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var snippets []Snippet
+
+	for rows.Next() {
+		// Create a new zero value Snippet struct.
+		var s Snippet
+		// Use rows.Scan() to copy the values from each field in the row to the
+		// new Snippet struct that we created. Again, the arguments to row.Scan()
+		// must be pointers to the place you want to copy the data into, and the
+		// number of arguments must be exactly the same as the number of
+		// columns returned by your statement.
+		err = rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
+		if err != nil {
+			return nil, err
+		}
+		// Append it to the slice of snippets.
+		snippets = append(snippets, s)
+	}
+
+	// When the rows.Next() loop has finished we call rows.Err() to retrieve any
+	// error that was encountered during the iteration. It's important to
+	// call this - don't assume the iteration completed successfully over the
+	// entire result set.
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	// If everything went OK then return the Snippets slice.
+	return snippets, nil
+
 }
