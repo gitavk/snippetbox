@@ -2,7 +2,7 @@ package main
 
 import "net/http"
 
-func (app *application) routers() *http.ServeMux {
+func (app *application) routers() http.Handler {
 
 	mux := http.NewServeMux()
 
@@ -14,5 +14,5 @@ func (app *application) routers() *http.ServeMux {
 	mux.HandleFunc("GET /snippet/create", app.snippetCreate)
 	mux.HandleFunc("POST /snippet/create", app.snippetCreatePost)
 
-	return mux
+	return commonHeaders(mux)
 }
