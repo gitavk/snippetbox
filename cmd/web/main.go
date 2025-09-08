@@ -25,19 +25,12 @@ func main() {
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
 
-	db, err := openDB(*dsn)
+	db, err := openDB(*dsn, logger)
 	if err != nil {
 		logger.Error(err.Error())
 		os.Exit(1)
 	}
 	defer db.Close()
-	var db_time string
-	err = db.QueryRow("select NOW() ").Scan(&db_time)
-	if err != nil {
-		logger.Error("QueryRow failed", "err", err)
-		os.Exit(1)
-	}
-	logger.Info("Database info:", "db_time", db_time)
 
 	templateCache, err := newTemplateCache()
 	if err != nil {
@@ -57,7 +50,7 @@ func main() {
 	os.Exit(1)
 }
 
-func openDB(dsn string) (*sql.DB, error) {
+func openDB(dsn string, logger *slog.Logger) (*sql.DB, error) {
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
 		return nil, err
@@ -67,5 +60,14 @@ func openDB(dsn string) (*sql.DB, error) {
 		db.Close()
 		return nil, err
 	}
+
+	var db_time string
+	err = db.QueryRow("select NOW() ").Scan(&db_time)
+	if err != nil {
+		logger.Error("QueryRow failed", "err", err)
+		os.Exit(1)
+	}
+	logger.Info("Database info:", "db_time", db_time)
+
 	return db, nil
 }
