@@ -9,6 +9,8 @@ import (
 	"os"
 
 	"github.com/gitavk/snippetbox/internal/models"
+
+	"github.com/go-playground/form/v4"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -16,6 +18,7 @@ type application struct {
 	logger        *slog.Logger
 	snippets      *models.SnippetModel
 	templateCache map[string]*template.Template
+	formDecoder   form.Decoder
 }
 
 func main() {
@@ -41,6 +44,7 @@ func main() {
 		logger:        logger,
 		snippets:      &models.SnippetModel{DB: db},
 		templateCache: templateCache,
+		formDecoder:   *form.NewDecoder(),
 	}
 
 	logger.Info("starting server on", slog.String("addr", *addr))

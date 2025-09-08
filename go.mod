@@ -2,7 +2,10 @@ module github.com/gitavk/snippetbox
 
 go 1.25.0
 
-require github.com/jackc/pgx/v5 v5.7.5
+require (
+	github.com/go-playground/form/v4 v4.2.1
+	github.com/jackc/pgx/v5 v5.7.5
+)
 
 require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
