@@ -11,6 +11,7 @@ import (
 // Define a templateData type to act as the holding structure for
 type templateData struct {
 	CurrentYear int
+	Flash       string
 	Snippet     models.Snippet
 	Snippets    []models.Snippet
 	Form        any
