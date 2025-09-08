@@ -7,18 +7,23 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
+	"github.com/alexedwards/scs/redisstore"
+	"github.com/alexedwards/scs/v2"
 	"github.com/gitavk/snippetbox/internal/models"
+	"github.com/gomodule/redigo/redis"
 
 	"github.com/go-playground/form/v4"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type application struct {
-	logger        *slog.Logger
-	snippets      *models.SnippetModel
-	templateCache map[string]*template.Template
-	formDecoder   form.Decoder
+	logger         *slog.Logger
+	snippets       *models.SnippetModel
+	templateCache  map[string]*template.Template
+	formDecoder    form.Decoder
+	sessionManager *scs.SessionManager
 }
 
 func main() {
@@ -41,10 +46,11 @@ func main() {
 	}
 
 	app := &application{
-		logger:        logger,
-		snippets:      &models.SnippetModel{DB: db},
-		templateCache: templateCache,
-		formDecoder:   *form.NewDecoder(),
+		logger:         logger,
+		snippets:       &models.SnippetModel{DB: db},
+		templateCache:  templateCache,
+		formDecoder:    *form.NewDecoder(),
+		sessionManager: createSessionManager(),
 	}
 
 	logger.Info("starting server on", slog.String("addr", *addr))
@@ -74,4 +80,18 @@ func openDB(dsn string, logger *slog.Logger) (*sql.DB, error) {
 	logger.Info("Database info:", "db_time", db_time)
 
 	return db, nil
+}
+
+func createSessionManager() *scs.SessionManager {
+	pool := &redis.Pool{
+		MaxIdle: 10,
+		Dial: func() (redis.Conn, error) {
+			return redis.Dial("tcp", "localhost:6379")
+		},
+	}
+
+	sessionManager := scs.New()
+	sessionManager.Store = redisstore.New(pool)
+	sessionManager.Lifetime = 12 * time.Hour
+	return sessionManager
 }

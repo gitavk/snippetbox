@@ -11,5 +11,10 @@ services:
     volumes:
     - snippet_db_data:/var/lib/postgresql/data
 
+  valkey:
+    image: valkey/valkey:latest
+    ports:
+      - "6379:6379"
+
 volumes:
   snippet_db_data:
