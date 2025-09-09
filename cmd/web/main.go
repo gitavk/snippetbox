@@ -60,7 +60,10 @@ func main() {
 	}
 
 	logger.Info("starting server on", slog.String("addr", *addr))
-	err = srv.ListenAndServe()
+	// Use the ListenAndServeTLS() method to start the HTTPS server. We
+	// pass in the paths to the TLS certificate and corresponding private key as
+	// the two parameters.
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	logger.Error(err.Error())
 	os.Exit(1)
 
@@ -99,5 +102,9 @@ func createSessionManager() *scs.SessionManager {
 	sessionManager := scs.New()
 	sessionManager.Store = redisstore.New(pool)
 	sessionManager.Lifetime = 12 * time.Hour
+	// Make sure that the Secure attribute is set on our session cookies.
+	// Setting this means that the cookie will only be sent by a user's web
+	// browser when an HTTPS connection is being used (and won't be sent over an unsecure HTTP connection).
+	sessionManager.Cookie.Secure = true
 	return sessionManager
 }
