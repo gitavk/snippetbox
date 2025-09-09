@@ -53,11 +53,16 @@ func main() {
 		sessionManager: createSessionManager(),
 	}
 
-	logger.Info("starting server on", slog.String("addr", *addr))
+	srv := &http.Server{
+		Addr:    *addr,
+		Handler: app.routers(),
+	}
 
-	err = http.ListenAndServe(*addr, app.routers())
+	logger.Info("starting server on", slog.String("addr", *addr))
+	err = srv.ListenAndServe()
 	logger.Error(err.Error())
 	os.Exit(1)
+
 }
 
 func openDB(dsn string, logger *slog.Logger) (*sql.DB, error) {
