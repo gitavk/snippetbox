@@ -76,6 +76,10 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 	if err != nil {
 		app.serverError(w, r, err)
 	}
+
+	// Deliberate error: set a Content-Length header with an invalid (non-integer)
+	// w.Header().Set("Content-Length", "this isn't an integer")
+
 	// Write out the provided HTTP status code ('200 OK', '400 Bad Request' etc).
 	w.WriteHeader(status)
 

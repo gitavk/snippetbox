@@ -54,8 +54,9 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:    *addr,
-		Handler: app.routers(),
+		Addr:     *addr,
+		Handler:  app.routers(),
+		ErrorLog: slog.NewLogLogger(logger.Handler(), slog.LevelError),
 	}
 
 	logger.Info("starting server on", slog.String("addr", *addr))
