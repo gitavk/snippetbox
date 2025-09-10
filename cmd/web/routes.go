@@ -16,5 +16,11 @@ func (app *application) routers() http.Handler {
 	mux.Handle("GET /snippet/create", session(http.HandlerFunc(app.snippetCreate)))
 	mux.Handle("POST /snippet/create", session(http.HandlerFunc(app.snippetCreatePost)))
 
+	mux.Handle("GET /user/signup", session(http.HandlerFunc(app.userSignup)))
+	mux.Handle("POST /user/signup", session(http.HandlerFunc(app.userSignupPost)))
+	mux.Handle("GET /user/login", session(http.HandlerFunc(app.userLogin)))
+	mux.Handle("POST /user/login", session(http.HandlerFunc(app.userLoginPost)))
+	mux.Handle("POST /user/logout", session(http.HandlerFunc(app.userLogoutPost)))
+
 	return app.recoverPanic(app.logRequest(commonHeaders(mux)))
 }
