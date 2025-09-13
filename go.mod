@@ -8,6 +8,8 @@ require (
 	github.com/go-playground/form/v4 v4.2.1
 	github.com/gomodule/redigo v1.8.0
 	github.com/jackc/pgx/v5 v5.7.5
+	github.com/justinas/alice v1.2.0
+	github.com/justinas/nosurf v1.2.0
 	golang.org/x/crypto v0.42.0
 )
 
