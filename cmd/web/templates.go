@@ -2,10 +2,12 @@ package main
 
 import (
 	"html/template"
+	"io/fs"
 	"path/filepath"
 	"time"
 
 	"github.com/gitavk/snippetbox/internal/models"
+	"github.com/gitavk/snippetbox/ui"
 )
 
 // Define a templateData type to act as the holding structure for
@@ -34,7 +36,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	// match the pattern "./ui/html/pages/*.tmpl". This will essentially give
 	// us a slice of all the filepaths for our application 'page' templates
 	// like [ui/html/pages/home.tmpl ui/html/pages/view.tmpl]
-	pages, err := filepath.Glob("./ui/html/pages/*.tmpl")
+	pages, err := fs.Glob(ui.Files, "html/pages/*.tmpl")
 	if err != nil {
 		return nil, err
 	}
@@ -43,18 +45,16 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		// Extract the file name (like 'home.tmpl') from the full filepath
 		// and assign it to the name variable.
 		name := filepath.Base(page)
+
+		// Create a slice containing the filepath patterns for the templates we
+		// want to parse.
+		patterns := []string{
+			"html/base.tmpl",
+			"html/partials/*.tmpl",
+			page,
+		}
 		// Parse the base into a template set.
-		ts, err := template.New(name).Funcs(functions).ParseFiles("./ui/html/base.tmpl")
-		if err != nil {
-			return nil, err
-		}
-		// Parse the partials into a template set.
-		ts, err = ts.ParseGlob("./ui/html/partials/*.tmpl")
-		if err != nil {
-			return nil, err
-		}
-		// Parse the files into a template set.
-		ts, err = ts.ParseFiles(page)
+		ts, err := template.New(name).Funcs(functions).ParseFS(ui.Files, patterns...)
 		if err != nil {
 			return nil, err
 		}
