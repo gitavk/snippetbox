@@ -10,6 +10,10 @@ import (
 	"github.com/gitavk/snippetbox/internal/validator"
 )
 
+func ping(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("OK"))
+}
+
 type snippetCreateForm struct {
 	Title   string `form:"title"`
 	Content string `form:"content"`
