@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 	"time"
+
+	"github.com/gitavk/snippetbox/internal/assert"
 )
 
 var tests = []struct {
@@ -36,13 +38,7 @@ func TestHumanDate(t *testing.T) {
 		// function containing the actual test for each case.
 		t.Run(tt.name, func(t *testing.T) {
 			hd := humanDate(tt.tm)
-			if hd != tt.want {
-				// Check that the output from the humanDate function is in the format we
-				// expect. If it isn't what we expect, use the t.Errorf() function to
-				// indicate that the test has failed and log the expected and actual
-				// values.
-				t.Errorf("got %q; want %q", hd, tt.want)
-			}
+			assert.Equal(t, hd, tt.want)
 		})
 	}
 }
