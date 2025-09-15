@@ -10,7 +10,19 @@ import (
 	"github.com/gitavk/snippetbox/internal/assert"
 )
 
-func TestPing(t *testing.T) {
+func TestPingRoute(t *testing.T) {
+	app := newTestApplication(t)
+
+	ts := newTestServer(t, app.routers())
+	defer ts.Close()
+
+	res := ts.get(t, "/ping")
+	assert.Equal(t, res.status, http.StatusOK)
+	assert.Equal(t, res.body, "OK")
+
+}
+
+func TestPingHandler(t *testing.T) {
 	// Initialize a new httptest.ResponseRecorder.
 	rr := httptest.NewRecorder()
 	// Initialize a new dummy http.Request.

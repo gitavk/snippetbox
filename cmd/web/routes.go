@@ -10,6 +10,10 @@ import (
 func (app *application) routers() http.Handler {
 
 	mux := http.NewServeMux()
+
+	// GET /ping route, for end 2 end test without middleware
+	mux.HandleFunc("GET /ping", ping)
+
 	// Use the http.FileServerFS() function to create an HTTP handler which
 	// serves the embedded files in ui.Files. It's important to note that our
 	// static files are contained in the "static" folder of the ui.Files
