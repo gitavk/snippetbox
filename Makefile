@@ -4,8 +4,11 @@ format:
 run:
 	go run ./cmd/web/
 
+tests-all:
+	go test -v ./...
+
 tests:
-	go test ./...
+	go test -v -short ./...
 
 tests-clean-cache:
 	go clean -testcache

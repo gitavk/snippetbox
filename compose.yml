@@ -16,5 +16,18 @@ services:
     ports:
       - "6379:6379"
 
+  db_test:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: snippetbox
+    ports:
+    - "5433:5432"
+    volumes:
+    - snippet_db_test:/var/lib/postgresql/data
+
 volumes:
   snippet_db_data:
+  snippet_db_test:
